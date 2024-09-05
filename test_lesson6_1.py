@@ -10,16 +10,21 @@ driver.maximize_window()
 try:
     driver.get("https://bonigarcia.dev/selenium-webdriver-java/data-types.html")
 
-    driver.find_element(By.NAME, "first-name").send_keys("Иван")
-    driver.find_element(By.NAME, "last-name").send_keys("Петров")
-    driver.find_element(By.NAME, "address").send_keys("Ленина, 55-3")
-    driver.find_element(By.NAME, "e-mail").send_keys("test@skypro.com")
-    driver.find_element(By.NAME, "phone").send_keys("+7985899998787")
-    driver.find_element(By.NAME, "zip-code").send_keys("")  # Пустое значение для zip-code
-    driver.find_element(By.NAME, "city").send_keys("Москва")
-    driver.find_element(By.NAME, "country").send_keys("Россия")
-    driver.find_element(By.NAME, "job-position").send_keys("QA")
-    driver.find_element(By.NAME, "company").send_keys("SkyPro")
+    form_data = {
+        "first-name": "Иван",
+        "last-name": "Петров",
+        "address": "Ленина, 55-3",
+        "e-mail": "test@skypro.com",
+        "phone": "+7985899998787",
+        "zip-code": "", 
+        "city": "Москва",
+        "country": "Россия",
+        "job-position": "QA",
+        "company": "SkyPro"
+    }
+
+    for field_name, value in form_data.items():
+        driver.find_element(By.NAME, field_name).send_keys(value)
 
     submit_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//button[@type='submit']"))
@@ -28,21 +33,19 @@ try:
 
     time.sleep(2)
 
-    elements_to_check = ["first-name", "last-name", "address", "zip-code", "city", "country", "e-mail", "phone", "job-position", "company"]
-    
-    for element_id in elements_to_check:
+    for field_name in form_data.keys():
         element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, element_id))
+            EC.presence_of_element_located((By.ID, field_name))
         )
         background_color = element.value_of_css_property("background-color")
-        print(f"Элемент {element_id} имеет цвет: {background_color}")
+        print(f"Элемент {field_name} имеет цвет: {background_color}")
 
         if background_color == "rgba(209, 231, 221, 1)":
-            print(f"Элемент {element_id} имеет цвет: зеленый")
+            print(f"Элемент {field_name} имеет цвет: зеленый")
         elif background_color == "rgba(248, 215, 218, 1)":
-            print(f"Элемент {element_id} имеет цвет: красный")
+            print(f"Элемент {field_name} имеет цвет: красный")
         else:
-            print(f"Элемент {element_id} имеет неизвестный цвет")
-finally:
+            print(f"Элемент {field_name} имеет неизвестный цвет")
 
+finally:
     driver.quit()
